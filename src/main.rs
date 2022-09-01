@@ -63,6 +63,7 @@ impl DataTable {
             let res = v[i];
             ret.push(res);
         }
+        println!("Top {num} half hours with most cars: {ret:?}");
         Some(ret)
     }
 
@@ -137,7 +138,7 @@ impl DataTable {
 
 fn main() {
     //  Load the data
-    let data = DataTable::load_data("./data/test.data").expect("Unable to parse Data");
+    let data = DataTable::load_data("./data/data.item").expect("Unable to parse Data");
     // Insert the data 
     let mut table = DataTable::new().insert_data(data);
     let total_cars = table.get_total_cars();
