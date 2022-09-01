@@ -1,5 +1,5 @@
 use chrono::{NaiveDateTime, DateTime, Utc, FixedOffset, NaiveDate};
-use std::{fs::File, collections::{HashMap, BTreeMap}, io::{BufReader, BufRead}};
+use std::{fs::File, collections::{HashMap, BTreeMap, HashSet}, io::{BufReader, BufRead}};
 
 type Table = Vec<(NaiveDateTime, i32)>;
 
@@ -31,6 +31,8 @@ impl DataTable {
         return total 
         
     }
+    //  Time: O(n)
+    //  Space O(n)
     fn get_table(&mut self) { 
         let mut table: HashMap<NaiveDate, i32> = HashMap::new();
         let data_set = &self.raw_data;
@@ -54,15 +56,44 @@ impl DataTable {
         }
     }
     /// Returns the contigous records 
-    fn get_least_cars(&self, time_period: f32) { 
-        let mut v: Vec<(NaiveDateTime, i32)> = self.raw_data.clone().into_iter().collect();
+    /// Time: O(n)  
+    /// Space: O(i)
+    fn get_least_interval(&self, time_period: f32) { 
+        let nums = self.raw_data.clone();
+        let interval = (time_period * 2.0) as usize;
         
+        let window_sum = (0..interval)
+            .fold(0, |mut sum, i| {
+                sum += nums[i].1; 
+                sum
+        });
+        // println!("{window_sum:?}");
+        let mut res = window_sum;
+        let mut curr_sum = res;
+        let mut index = HashSet::new();
+        for i in interval..nums.len() { 
+            let k = i - interval;
+            curr_sum += nums[i].1 - nums[k].1;
+            println!("{curr_sum:?} {res}");
+
+            if curr_sum < res { 
+                println!("{i:?}");
+                if !index.insert((k, i)) { 
+                    index.clear();
+                } 
+                res = i32::min(res, curr_sum);
+            }
+            //  Save index in a list
+        }
 
 
-        println!("{v:#?}")
+        for i in index.iter() { 
+            for ch in i.0..=i.1 { 
+                println!("{:?}", nums[ch])
+            }
+        }
+
     }
-
-
 }
 
 
@@ -78,14 +109,12 @@ fn main() {
     let total_cars = table.get_total_cars();
     let data_table = table.get_table();
     let top_three = table.get_top_cars(3);
-    let least_cars = table.get_least_cars(2.0);
-  
+    //  1.5 * 2 == 3 
+    let least_cars = table.get_least_interval(1.5);
 
 }
 
-
-fn load_data(path: &str) -> Vec<(NaiveDateTime, i32)>
- { 
+fn load_data(path: &str) -> Vec<(NaiveDateTime, i32)> { 
     let file = File::open(path).expect("Unable to open file");
     let file_reader = BufReader::new(file);
     let mut table = Vec::new();
