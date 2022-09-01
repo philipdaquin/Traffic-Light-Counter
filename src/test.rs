@@ -50,7 +50,7 @@ mod tests {
     fn test_get_top_five_cars() { 
         let data = DataTable::load_data("./data/test.data").unwrap();
         let table = DataTable::new().insert_data(data);
-        let top = table.get_top_cars(1);
+        let top = table.get_most_traffic(1);
         println!("{top:?}");
         assert!(top.is_some(), "test failed, unable to get data from table");
 

@@ -51,7 +51,7 @@ impl DataTable {
 
     /// Time: O(logN)
     /// Space: O(n)
-    pub fn get_top_cars(&self, num: usize) -> Option<Table> { 
+    pub fn get_most_traffic(&self, num: usize) -> Option<Table> { 
         let mut v: Vec<(NaiveDateTime, i32)> = self.raw_data
             .clone()
             .into_iter()
@@ -128,8 +128,8 @@ impl DataTable {
         }
         return Some(table)
     }
-    fn add_data(&mut self, data: (NaiveDateTime, i32)) { 
-        self.raw_data.push(data);
+    fn add_data(&mut self, timestamp: NaiveDateTime, count: i32) { 
+        self.raw_data.push((timestamp, count));
     }
     
 }
@@ -144,7 +144,7 @@ fn main() {
     let mut table = DataTable::new().insert_data(data);
     let total_cars = table.get_total_cars();
     let data_table = table.get_table();
-    let top_three = table.get_top_cars(3);
+    let top_three = table.get_most_traffic(3);
     let least_cars = table.get_least_interval(1.5);
     println!("{least_cars:?}");
 }
