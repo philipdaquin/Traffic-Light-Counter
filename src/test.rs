@@ -3,7 +3,7 @@ use crate::DataTable;
 
 #[cfg(test)]
 mod tests {
-    use chrono::NaiveDateTime;  
+    use chrono::{NaiveDateTime, NaiveDate};  
     use super::*;
     
     #[test]
@@ -24,7 +24,8 @@ mod tests {
         let table = DataTable::new().insert_data(data);
         let sum = table.get_total_cars();
 
-        assert!(sum.is_some(), "Unable to calculate the sum of cars") 
+        assert!(sum.is_some(), "Unable to calculate the sum of cars");
+        assert_eq!(sum.unwrap(), 17)
     }
     #[test]
     fn test_sum_correctness() { 
@@ -38,8 +39,11 @@ mod tests {
     fn test_get_sorted_table() { 
         let data = DataTable::load_data("./data/test.data").unwrap();
         let table = DataTable::new().insert_data(data);
+
+
         let dt = table.clone().get_table();
-        assert_eq!(dt.is_some(), true, "testing if we can get the table in the yy-mm-dd format: {dt:?} ")
+        assert_eq!(dt.is_some(), true, "testing if we can get the table in the yy-mm-dd format: {dt:?} ");
+        assert_eq!(dt.unwrap().get(&NaiveDate::from_ymd(2022,11, 1)).is_some(), true)
     }
 
     #[test]
@@ -58,8 +62,10 @@ mod tests {
         let interval = table.get_least_interval(1.5);
 
         assert!(interval.is_some(), "test failed, unable to get data from table")
-
     }
+
+
+
 
 
 
