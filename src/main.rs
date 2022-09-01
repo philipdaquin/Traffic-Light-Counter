@@ -1,7 +1,7 @@
 mod test;
 
 use chrono::{NaiveDateTime, DateTime, Utc, FixedOffset, NaiveDate};
-use std::{fs::File, collections::{HashMap, BTreeMap, HashSet}, io::{BufReader, BufRead}};
+use std::{fs::File, collections::{HashMap, BTreeMap, HashSet, VecDeque}, io::{BufReader, BufRead}};
 
 type Table = Vec<(NaiveDateTime, i32)>;
 
@@ -69,51 +69,45 @@ impl DataTable {
     /// Time: O(n)  
     /// Space: O(n)
     /// Example: get_least_interval(1.5hours) = 3 consecutive
-    pub fn get_least_interval(&self, time_period: f32) -> Option<Table> { 
+    pub fn get_least_interval(&self, time_period: f32) -> Option<Table>  { 
 
         
         let nums = self
             .raw_data
             .clone();
-        
-        // if time_period as usize > nums.len() { return Some(vec![]) } 
-
-
-        let interval = (time_period * 2.0) as usize;
+        let mut interval = (time_period * 2.0) as usize;
         
         let window_sum = (0..interval)
             .fold(0, |mut sum, i| {
                 sum += nums[i].1; 
                 sum
         });
-        let mut res = window_sum;
-        let mut curr_sum = res;
-        let mut index = HashSet::new();
+        let mut window = window_sum;
+        let mut curr_sum = window;
+        let mut deque = VecDeque::new();
         
         for i in interval..nums.len() { 
             let k = i - interval;
-            let one = nums[i].1;
-            let two = nums[k].1;
-
+            let (one, two) = (nums[i].1, nums[k].1);
             curr_sum += one - two;
 
-            if curr_sum < res { 
-                if !index.insert((k, i)) { 
-                    index.clear();
-                } 
-                res = i32::min(res, curr_sum);
+            if curr_sum < window { 
+                deque.push_back((k, i));
+                window = i32::min(window, curr_sum);
             }
         }
-        println!("{res:?}");
-        let mut ret = vec![];
-        for i in index { 
-            println!("The least number of cars:");
-            for ch in i.0..i.1 { 
-                println!("{:?}", nums[ch]);
-                ret.push(nums[ch]);
-            }
-        }
-        return Some(ret)
+        // let mut res = vec![];
+        let (k, i) = *deque
+            .iter()
+            .last()
+            .expect("No Solution");
+        
+        return Some((k..i).fold(vec![], 
+            |mut res, i|{
+                res.push(nums[i]);
+                res
+        }))
+
     
     }
     pub fn load_data(path: &str) -> Option<Vec<(NaiveDateTime, i32)>> { 
@@ -133,20 +127,24 @@ impl DataTable {
         }
         return Some(table)
     }
+    fn add_data(&mut self, data: (NaiveDateTime, i32)) { 
+        self.raw_data.push(data);
+    }
+    
 }
 
 
 
 fn main() {
     //  Load the data
-    let data = DataTable::load_data("./data/data.item").expect("Unable to parse Data");
+    let data = DataTable::load_data("./data/test.data").expect("Unable to parse Data");
     // Insert the data 
     let mut table = DataTable::new().insert_data(data);
     let total_cars = table.get_total_cars();
     let data_table = table.get_table();
     let top_three = table.get_top_cars(3);
     let least_cars = table.get_least_interval(1.5);
-
+    println!("{least_cars:?}");
 }
 
 
