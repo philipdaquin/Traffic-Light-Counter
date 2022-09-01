@@ -76,7 +76,7 @@ impl DataTable {
             .raw_data
             .clone();
         
-        if time_period as usize > nums.len() { return Some(vec![]) } 
+        // if time_period as usize > nums.len() { return Some(vec![]) } 
 
 
         let interval = (time_period * 2.0) as usize;
@@ -104,12 +104,13 @@ impl DataTable {
                 res = i32::min(res, curr_sum);
             }
         }
+        println!("{res:?}");
         let mut ret = vec![];
-        for i in index.iter() { 
+        for i in index { 
             println!("The least number of cars:");
             for ch in i.0..i.1 { 
+                println!("{:?}", nums[ch]);
                 ret.push(nums[ch]);
-                println!("{:?}", nums[ch])
             }
         }
         return Some(ret)

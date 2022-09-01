@@ -52,16 +52,19 @@ mod tests {
         let table = DataTable::new().insert_data(data);
         let top = table.get_top_cars(1);
         println!("{top:?}");
-        assert!(top.is_some(), "test failed, unable to get data from table")
+        assert!(top.is_some(), "test failed, unable to get data from table");
+
     }
 
     #[test]
     fn test_get_least_traffic() { 
-        let data = DataTable::load_data("./data/test.data").unwrap();
+        let data = DataTable::load_data("./data/test2.data").unwrap();
         let table = DataTable::new().insert_data(data);
         let interval = table.get_least_interval(1.5);
 
-        assert!(interval.is_some(), "test failed, unable to get data from table")
+        assert!(interval.is_some(), "test failed, unable to get data from table");
+        // assert_eq!(sum.unwrap(), 17)
+
     }
 
 
