@@ -37,8 +37,8 @@ impl DataTable {
     }
     //  Time: O(n)
     //  Space O(n)
-    pub fn get_table(&mut self) -> Option<HashMap<NaiveDate, i32>> { 
-        let mut table: HashMap<NaiveDate, i32> = HashMap::new();
+    pub fn get_table(&mut self) -> Option<BTreeMap<NaiveDate, i32>> { 
+        let mut table: BTreeMap<NaiveDate, i32> = BTreeMap::new();
         let data_set = &self.raw_data;
 
         for (_, (date, count)) in data_set.iter().enumerate() { 
@@ -138,6 +138,7 @@ impl DataTable {
 
 fn main() {
     //  Load the data
+    println!("Loading Data...");
     let data = DataTable::load_data("./data/data.item").expect("Unable to parse Data");
     // Insert the data 
     let mut table = DataTable::new().insert_data(data);
