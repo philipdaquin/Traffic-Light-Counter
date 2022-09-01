@@ -68,10 +68,17 @@ impl DataTable {
 
     /// Time: O(n)  
     /// Space: O(n)
-    pub  fn get_least_interval(&self, time_period: f32) -> Option<Table> { 
+    /// Example: get_least_interval(1.5hours) = 3 consecutive
+    pub fn get_least_interval(&self, time_period: f32) -> Option<Table> { 
+
+        
         let nums = self
             .raw_data
             .clone();
+        
+        if time_period as usize > nums.len() { return Some(vec![]) } 
+
+
         let interval = (time_period * 2.0) as usize;
         
         let window_sum = (0..interval)

@@ -18,7 +18,6 @@ mod tests {
     fn test_adding_data() { 
         assert!(DataTable::load_data("./data/test.data").is_some(), "Something went wrong")
     }
-
     #[test]
     fn test_total_cars() { 
         let data = DataTable::load_data("./data/test.data").unwrap();
@@ -35,4 +34,33 @@ mod tests {
 
         assert_ne!(sum.unwrap(), 0, "testting if the sum: {sum:?} != 0")
     }
+    #[test]
+    fn test_get_sorted_table() { 
+        let data = DataTable::load_data("./data/test.data").unwrap();
+        let table = DataTable::new().insert_data(data);
+        let dt = table.clone().get_table();
+        assert_eq!(dt.is_some(), true, "testing if we can get the table in the yy-mm-dd format: {dt:?} ")
+    }
+
+    #[test]
+    fn test_get_top_five_cars() { 
+        let data = DataTable::load_data("./data/test.data").unwrap();
+        let table = DataTable::new().insert_data(data);
+        let top = table.get_top_cars(1);
+        println!("{top:?}");
+        assert!(top.is_some(), "test failed, unable to get data from table")
+    }
+
+    #[test]
+    fn test_get_least_traffic() { 
+        let data = DataTable::load_data("./data/test.data").unwrap();
+        let table = DataTable::new().insert_data(data);
+        let interval = table.get_least_interval(1.5);
+
+        assert!(interval.is_some(), "test failed, unable to get data from table")
+
+    }
+
+
+
 }
